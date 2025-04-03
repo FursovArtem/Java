@@ -1,3 +1,5 @@
+import java.io.*;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
@@ -15,8 +17,35 @@ public class Main {
                         new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 95, 96),
                         new Teacher("White", "Walter", 50, "Chemistry", 25)
                 };
-        for (Human h : group) {
+        /*for (Human h : group) {
             System.out.println(h);
+        }*/
+
+        //Save
+        try {
+            ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("group.dat"));
+            output.writeObject(group);
+            output.close();
+        } catch (IOException ex) {
+            System.err.println("Error saving to file");
         }
+
+        //Load
+        Human[] loadedGroup = null;
+        try {
+            ObjectInputStream input = new ObjectInputStream(new FileInputStream("group.dat"));
+            loadedGroup = (Human[]) input.readObject();
+            input.close();
+        } catch (IOException ex) {
+            System.err.println("Error opening file");
+        } catch (ClassNotFoundException ex) {
+            System.err.println("Object read is not a Human[]");
+        }
+
+        //Print
+        if (loadedGroup != null)
+            for (Human h : loadedGroup) {
+                System.out.println(h);
+            }
     }
 }

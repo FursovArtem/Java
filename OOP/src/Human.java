@@ -1,6 +1,8 @@
 import org.w3c.dom.ls.LSOutput;
 
-public class Human {
+import java.io.Serializable;
+
+public class Human implements Serializable {
     String lastName;
     String firstName;
     int age;
