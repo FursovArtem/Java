@@ -64,7 +64,7 @@ public class Main extends Application {
         hbox.getChildren().addAll(buttonTest, buttonDisconnect);
 
         root.setTop(hbox);
-        BorderPane.setMargin(hbox, new Insets(5, 5, 5, 5));
+        BorderPane.setMargin(hbox, new Insets(10, 10, 5, 10));
 
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(15, 10, 15, 10));
@@ -77,19 +77,19 @@ public class Main extends Application {
         vbox.getChildren().add(tablesComboBox);
 
         root.setLeft(vbox);
-        BorderPane.setMargin(vbox, new Insets(5, 5, 5, 5));
+        BorderPane.setMargin(vbox, new Insets(5, 5, 10, 10));
 
         tablesComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
             try {
                 TableView<String[]> table = createTableBySelectingComboBoxVar(statement, newValue);
                 table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
                 root.setCenter(table);
-                BorderPane.setMargin(table, new Insets(5, 5, 5, 5));
+                BorderPane.setMargin(table, new Insets(5, 10, 10, 5));
             } catch (SQLException e) {
-                Label error = new Label("Disconnected");
-                error.setStyle("-fx-text-fill: #e7e7e7;" +
+                Label errorLabel = new Label("Disconnected");
+                errorLabel.setStyle("-fx-text-fill: #e7e7e7;" +
                         "-fx-font-size: 32px;");
-                root.setCenter(error);
+                root.setCenter(errorLabel);
                 throw new RuntimeException(e);
             }
         });
