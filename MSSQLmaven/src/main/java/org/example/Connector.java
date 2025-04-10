@@ -1,70 +1,81 @@
 package org.example;
 
-import java.sql.DriverManager;
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
+
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Connector {
-    String connectionString;
-    Connection connection;
-    public Connector(String connectionString)
-    {
-        this.connectionString = connectionString;
-        try
-        {
-            connection = DriverManager.getConnection(connectionString);
-        }
-        catch (SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
-    }
-    public int Scalar(String query)
-    {
-        int scalar=-1;
-        try(Statement statement = connection.createStatement())
-        {
-            scalar = statement.executeUpdate(query);
-            System.out.println(scalar);
-        }
-        catch (SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
-        return scalar;
-    }
-    public void Select(String query)
-    {
-        try
-        {
-            Statement statement = connection.createStatement();//Открывает соединение??????/
+    private final Connection connection;
+    private final QueryRunner run = new QueryRunner();
 
-            ResultSet results = statement.executeQuery(query);
-            ResultSetMetaData metaData = results.getMetaData();
-            for(int i=1; i <= metaData.getColumnCount(); i++)
-            {
-                System.out.println(metaData.getColumnName(i) + "\t\t" + metaData.getColumnClassName(i));
+    public enum QueryMethod {
+        SELECT,
+        UPDATE,
+        INSERT,
+        DELETE,
+        SCALAR,
+        SELECT_DISPLAY_TEST;
+    }
+
+    public Connector(String connectionString) throws SQLException {
+        this.connection = DriverManager.getConnection(connectionString);
+    }
+
+    private void selectAndDisplayAsArrayList(String query) throws SQLException {
+        ResultSetHandler<List<Object[]>> handler = rs -> {
+            ResultSetMetaData meta = rs.getMetaData();
+            List<Object[]> result = new ArrayList<>();
+
+            int cols = meta.getColumnCount();
+            while (rs.next()) {
+                Object[] obj = new Object[cols];
+                for (int i = 0; i < cols; i++) {
+                    obj[i] = rs.getObject(i + 1);
+                }
+                result.add(obj);
+            }
+
+            return result;
+        };
+
+        List<Object[]> result = run.query(connection, query, handler);
+        for (Object[] row : result) {
+            for (Object obj : row) {
+                System.out.print(obj + "\t\t");
             }
             System.out.println();
-            while (results.next())
-            {
-               /* byte id = results.getByte("direction_id");
-                String name = results.getString("direction_name");
-                System.out.println(id+"\t\t"+name);*/
-                for(int i=1; i<=metaData.getColumnCount(); i++)
-                {
-                    System.out.print(results.getObject(i) + "\t");
-                }
-                System.out.println();
-            }
-            results.close();
-            //connection.close(); //Если закрыть, то последующие вызовы Select() НЕ будут работать
         }
-        catch(SQLException e)
-        {
-            System.err.println(e.getMessage());
+    }
+
+    private void selectAndDisplayScalar(String query) throws SQLException {
+        ScalarHandler<Integer> scalarHandler = new ScalarHandler<>();
+        int s = run.query(connection, query, scalarHandler);
+        System.out.println(s);
+    }
+
+    public void runQuery(String query, QueryMethod queryMethod) throws SQLException {
+        switch (queryMethod) {
+            case SELECT_DISPLAY_TEST:
+                if (query.toUpperCase().contains("SELECT")) selectAndDisplayAsArrayList(query);
+                else System.err.println("There is no SELECT in query");
+                break;
+            case SCALAR:
+                selectAndDisplayScalar(query);
+                break;
+            default:
+                System.err.println("Wrong query method");
         }
+    }
+
+    public void closeConnection() {
+        DbUtils.closeQuietly(connection);
     }
 }
