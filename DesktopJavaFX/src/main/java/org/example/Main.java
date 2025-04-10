@@ -74,6 +74,11 @@ public class Main extends Application {
                 "-fx-border-color: #e7e7e7;");
 
         ComboBox<String> tablesComboBox = new ComboBox<>(tableNames);
+        vbox.getChildren().add(tablesComboBox);
+
+        root.setLeft(vbox);
+        BorderPane.setMargin(vbox, new Insets(5, 5, 5, 5));
+
         tablesComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
             try {
                 TableView<String[]> table = createTableBySelectingComboBoxVar(statement, newValue);
@@ -88,10 +93,6 @@ public class Main extends Application {
                 throw new RuntimeException(e);
             }
         });
-        vbox.getChildren().add(tablesComboBox);
-
-        root.setLeft(vbox);
-        BorderPane.setMargin(vbox, new Insets(5, 5, 5, 5));
 
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("Hello JavaFX");
