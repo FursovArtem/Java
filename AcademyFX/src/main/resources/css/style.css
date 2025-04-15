@@ -1,0 +1,29 @@
+#root {
+    -fx-background-color: #1f1f22;
+}
+
+#textAreaStatus {
+    -fx-control-inner-background: #3f3f3f;
+    -fx-text-fill: white;
+}
+
+#textAreaStatus .text {
+    -fx-text-alignment: center;
+    -fx-background-color: text-area-background;
+}
+
+.table-view {
+    -fx-control-inner-background: #1f1f22;
+    -fx-text-fill: #e7e7e7;
+}
+
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
+    -fx-background-color: #3f3f3f;
+}
+
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #e7e7e7;
+}
+

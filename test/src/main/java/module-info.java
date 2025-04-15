@@ -1,4 +1,4 @@
-module org.example.academyfx {
+module org.example.test {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -10,9 +10,7 @@ module org.example.academyfx {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
-    requires org.apache.commons.dbutils;
-    requires java.sql;
 
-    opens org.example.academyfx to javafx.fxml;
-    exports org.example.academyfx;
+    opens org.example.test to javafx.fxml;
+    exports org.example.test;
 }
