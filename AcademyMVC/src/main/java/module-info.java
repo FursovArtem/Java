@@ -1,4 +1,4 @@
-module org.example.academyfx {
+module com.github.fursovartem.academymvc {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -13,10 +13,8 @@ module org.example.academyfx {
     requires org.apache.commons.dbutils;
     requires java.sql;
 
-    opens org.example.academyfx to javafx.fxml;
-    exports org.example.academyfx;
-    exports org.example.academyfx.view;
-    opens org.example.academyfx.view to javafx.fxml;
-    exports org.example.academyfx.models;
-    opens org.example.academyfx.models to javafx.fxml;
+    opens com.github.fursovartem.academymvc to javafx.fxml;
+    exports com.github.fursovartem.academymvc;
+    exports com.github.fursovartem.academymvc.controllers;
+    opens com.github.fursovartem.academymvc.controllers to javafx.fxml;
 }
