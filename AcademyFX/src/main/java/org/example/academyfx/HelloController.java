@@ -16,11 +16,15 @@ import java.util.Collection;
 public class HelloController {
     private Connector connector = null;
     @FXML
+    private TabPane tabPaneRoot;
+    @FXML
     private BorderPane root;
     @FXML
     private ComboBox<String> comboBoxTableSchemas;
     @FXML
     private TextArea textAreaStatus;
+    @FXML
+    private TableView<String[]> tableDirections;
 
     @FXML
     protected void onConnectButtonClick() {
@@ -57,6 +61,8 @@ public class HelloController {
     protected void onDisconnectButtonClick() {
         if (connector != null) {
             comboBoxTableSchemas.getItems().clear();
+            tableDirections.getItems().clear();
+            tableDirections.getColumns().clear();
             textAreaStatus.setText("Disconnected");
             root.setCenter(null);
             connector.closeConnection();
@@ -122,6 +128,38 @@ public class HelloController {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @FXML
+    protected void onDirectionsTabLoad() {
+        if (connector != null) {
+            try {
+                tableDirections.getItems().clear();
+                tableDirections.getColumns().clear();
+                Statement statement = connector.getConnection().createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM Directions");
+                for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
+                    TableColumn<String[], String> column = new TableColumn<>(resultSet.getMetaData().getColumnLabel(i + 1));
+                    tableDirections.getColumns().add(column);
+                    final int f = i;
+                    column.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[f]));
+                }
+                while (resultSet.next()) {
+                    Collection<String> list = new ArrayList<>();
+                    for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++)
+                        list.add(resultSet.getString(i));
+                    String[] array = new String[list.size()];
+                    list.toArray(array);
+                    tableDirections.getItems().addAll(array);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            Alert info = new Alert(Alert.AlertType.INFORMATION, "You have to establish connection", ButtonType.OK);
+            tabPaneRoot.getSelectionModel().select(0);
+            info.showAndWait();
         }
     }
 }

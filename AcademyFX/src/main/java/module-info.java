@@ -15,4 +15,8 @@ module org.example.academyfx {
 
     opens org.example.academyfx to javafx.fxml;
     exports org.example.academyfx;
+    exports org.example.academyfx.view;
+    opens org.example.academyfx.view to javafx.fxml;
+    exports org.example.academyfx.models;
+    opens org.example.academyfx.models to javafx.fxml;
 }
